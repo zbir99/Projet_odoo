@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue formulaire -->
+    <record id="view_medical_facture_form" model="ir.ui.view">
+        <field name="name">medical.facture.form</field>
+        <field name="model">medical.facture</field>
+        <field name="arch" type="xml">
+            <form string="Facture">
+                <header>
+                    <button name="action_confirm" string="Confirmer" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_pay" string="Marquer comme payée" type="object" class="oe_highlight" invisible="state != 'confirmed'"/>
+                    <button name="action_cancel" string="Annuler" type="object" invisible="state in ('cancelled', 'paid')"/>
+                    <button name="action_draft" string="Remettre en brouillon" type="object" invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_id" options="{'no_create': True}" readonly="state != 'draft'"/>
+                            <field name="medecin_id" options="{'no_create': True}" readonly="state != 'draft'"/>
+                            <field name="consultation_id" options="{'no_create': True}" readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="date_creation" readonly="state != 'draft'"/>
+                            <field name="montant_total" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Lignes de facture">
+                            <field name="ligne_ids" widget="one2many_list">
+                                <tree string="Lignes de facture" editable="bottom">
+                                    <field name="name"/>
+                                    <field name="quantite"/>
+                                    <field name="prix_unitaire"/>
+                                    <field name="montant_total" sum="Total"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Paiements">
+                            <field name="paiement_ids" readonly="state == 'draft'">
+                                <tree string="Paiements" editable="bottom">
+                                    <field name="name" readonly="1"/>
+                                    <field name="date_paiement"/>
+                                    <field name="montant" sum="Total"/>
+                                    <field name="mode_paiement"/>
+                                    <field name="reference_externe"/>
+                                </tree>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right" colspan="2" name="payment_total">
+                                <field name="montant_total" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <field name="montant_paye" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <field name="montant_restant" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                            <div class="oe_clear"/>
+                            <button name="action_register_payment" type="object" string="Enregistrer un paiement" class="oe_highlight" invisible="state not in ['confirmed', 'paid'] or montant_restant &lt;= 0"/>
+                        </page>
+                        <page string="Notes">
+                            <field name="note" placeholder="Informations complémentaires sur la facture..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste -->
+    <record id="view_medical_facture_tree" model="ir.ui.view">
+        <field name="name">medical.facture.tree</field>
+        <field name="model">medical.facture</field>
+        <field name="arch" type="xml">
+            <tree string="Factures" decoration-info="state == 'draft'" decoration-success="state == 'paid'" decoration-warning="state == 'confirmed'" decoration-danger="state == 'cancelled'">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="medecin_id"/>
+                <field name="date_creation"/>
+                <field name="montant_total" sum="Total"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vue recherche -->
+    <record id="view_medical_facture_search" model="ir.ui.view">
+        <field name="name">medical.facture.search</field>
+        <field name="model">medical.facture</field>
+        <field name="arch" type="xml">
+            <search string="Recherche Factures">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="medecin_id"/>
+                <filter string="Brouillon" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Confirmée" name="confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter string="Payée" name="paid" domain="[('state', '=', 'paid')]"/>
+                <filter string="Annulée" name="cancelled" domain="[('state', '=', 'cancelled')]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter string="Patient" name="patient" context="{'group_by': 'patient_id'}"/>
+                    <filter string="Médecin" name="medecin" context="{'group_by': 'medecin_id'}"/>
+                    <filter string="État" name="state" context="{'group_by': 'state'}"/>
+                    <filter string="Date" name="date" context="{'group_by': 'date_creation'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_medical_facture" model="ir.actions.act_window">
+        <field name="name">Factures</field>
+        <field name="res_model">medical.facture</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre première facture
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_medical_facture"
+              name="Factures"
+              parent="menu_medical_root"
+              action="action_medical_facture"
+              sequence="40"/>
+</odoo>

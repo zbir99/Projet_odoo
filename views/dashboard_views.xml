@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue tableau de bord temporairement commentée pour résoudre les problèmes de Kanban -->
+    <!--
+    <record id="medical_dashboard_view" model="ir.ui.view">
+        <field name="name">medical.dashboard.view</field>
+        <field name="model">medical.consultation</field>
+        <field name="arch" type="xml">
+            <kanban class="oe_background_grey o_kanban_dashboard" create="0">
+                <field name="id"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="container-fluid o_kanban_card_content">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h3 class="text-center">Tableau de Bord - Cabinet Médical</h3>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Consultations du jour</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div t-attf-class="o_value">
+                                                <t t-if="env.context && env.context.dashboard_data" t-esc="env.context.dashboard_data.today_consultations"/>
+                                                <t t-else="">0</t>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Rendez-vous à venir</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div t-attf-class="o_value">
+                                                <t t-if="env.context && env.context.dashboard_data" t-esc="env.context.dashboard_data.upcoming_appointments"/>
+                                                <t t-else="">0</t>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Patients actifs</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div t-attf-class="o_value">
+                                                <t t-if="env.context && env.context.dashboard_data" t-esc="env.context.dashboard_data.active_patients"/>
+                                                <t t-else="">0</t>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Consultations par jour</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="consultationsChart" width="400" height="200"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Recettes par médecin</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="revenueChart" width="400" height="200"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Taux d'occupation des créneaux horaires</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="occupationChart" width="800" height="200"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    -->
+
+    <!-- Action pour les statistiques (version très simple) -->
+    <record id="action_medical_consultation_stats" model="ir.actions.act_window">
+        <field name="name">Consultations par jour</field>
+        <field name="res_model">medical.consultation</field>
+        <field name="view_mode">graph</field>
+        <field name="domain">[]</field>
+        <field name="context">{'graph_groupbys': ['create_date:day']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune consultation trouvée
+            </p>
+            <p>
+                Ce graphique montre le nombre de consultations par mois.
+                Le tableau de bord complet sera disponible dans une prochaine mise à jour.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu pour les statistiques (version simplifiée) -->
+    <menuitem id="menu_medical_dashboard"
+              name="Statistiques médicales"
+              parent="menu_medical_root"
+              action="action_medical_consultation_stats"
+              sequence="40"/>
+</odoo>

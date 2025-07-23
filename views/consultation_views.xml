@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue formulaire pour les consultations -->
+    <record id="view_medical_consultation_form" model="ir.ui.view">
+        <field name="name">medical.consultation.form</field>
+        <field name="model">medical.consultation</field>
+        <field name="arch" type="xml">
+            <form string="Consultation">
+                <header>
+                    <button name="action_confirm" string="Confirmer" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_done" string="Terminer" type="object" class="oe_highlight" invisible="state != 'confirm'"/>
+                    <button name="action_cancel" string="Annuler" type="object" invisible="state not in ('draft', 'confirm')"/>
+                    <button name="action_create_invoice" string="Créer Facture" type="object" class="btn-primary" invisible="state != 'done' or facture_id"/>
+                    <button name="%(cabinet_medecin.report_medical_ordonnance)d" string="Imprimer Ordonnance" type="action" class="btn-info" invisible="state != 'done'" context="{'discard_logo_check': True}"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirm,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_id" options="{'no_create': True}" readonly="state != 'draft'"/>
+                            <field name="medecin_id" options="{'no_create': True}" readonly="state != 'draft'"/>
+                            <field name="rendez_vous_id" options="{'no_create': True}" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="date_consultation" readonly="state != 'draft'"/>
+                            <field name="facture_id" readonly="1" invisible="not facture_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Diagnostic et Ordonnance">
+                            <group>
+                                <field name="diagnostic" placeholder="Diagnostic du patient..." readonly="state == 'done'"/>
+                                <field name="ordonnance" placeholder="Ordonnance médicale..." readonly="state == 'done'"/>
+                                <field name="examens" placeholder="Examens prescrits..." readonly="state == 'done'"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste pour les consultations -->
+    <record id="view_medical_consultation_tree" model="ir.ui.view">
+        <field name="name">medical.consultation.tree</field>
+        <field name="model">medical.consultation</field>
+        <field name="arch" type="xml">
+            <tree string="Consultations" decoration-info="state == 'draft'" decoration-success="state == 'done'" decoration-warning="state == 'confirm'" decoration-danger="state == 'cancel'">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="medecin_id"/>
+                <field name="date_consultation"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vue recherche pour les consultations -->
+    <record id="view_medical_consultation_search" model="ir.ui.view">
+        <field name="name">medical.consultation.search</field>
+        <field name="model">medical.consultation</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher une consultation">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="medecin_id"/>
+                <filter string="Brouillon" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Confirmé" name="confirm" domain="[('state', '=', 'confirm')]"/>
+                <filter string="Terminé" name="done" domain="[('state', '=', 'done')]"/>
+                <filter string="Annulé" name="cancel" domain="[('state', '=', 'cancel')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Patient" name="patient_id" context="{'group_by': 'patient_id'}"/>
+                    <filter string="Médecin" name="medecin_id" context="{'group_by': 'medecin_id'}"/>
+                    <filter string="État" name="state" context="{'group_by': 'state'}"/>
+                    <filter string="Date" name="date_consultation" context="{'group_by': 'date_consultation'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vue calendrier pour les consultations -->
+    <record id="view_medical_consultation_calendar" model="ir.ui.view">
+        <field name="name">medical.consultation.calendar</field>
+        <field name="model">medical.consultation</field>
+        <field name="arch" type="xml">
+            <calendar string="Consultations" date_start="date_consultation" color="medecin_id" mode="month" hide_time="true">
+                <field name="patient_id"/>
+                <field name="medecin_id"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+    
+    <!-- Vue Kanban pour les consultations -->
+    <record id="view_medical_consultation_kanban" model="ir.ui.view">
+        <field name="name">medical.consultation.kanban</field>
+        <field name="model">medical.consultation</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="id"/>
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="medecin_id"/>
+                <field name="date_consultation"/>
+                <field name="state"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title">
+                                    <field name="name"/>
+                                </strong>
+                                <div>
+                                    Patient: <field name="patient_id"/>
+                                </div>
+                                <div>
+                                    Médecin: <field name="medecin_id"/>
+                                </div>
+                                <div>
+                                    Date: <field name="date_consultation"/>
+                                </div>
+                                <div>
+                                    <field name="state" widget="badge" 
+                                           decoration-info="state == 'draft'" 
+                                           decoration-warning="state == 'confirm'" 
+                                           decoration-success="state == 'done'" 
+                                           decoration-danger="state == 'cancel'"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+
+
+    <!-- Action pour les consultations -->
+    <record id="action_medical_consultation" model="ir.actions.act_window">
+        <field name="name">Consultations</field>
+        <field name="res_model">medical.consultation</field>
+        <field name="view_mode">tree,form,calendar,kanban</field>
+        <field name="search_view_id" ref="view_medical_consultation_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer votre première consultation
+            </p>
+        </field>
+    </record>
+</odoo>

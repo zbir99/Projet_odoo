@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="MedicalDashboard">
+        <div class="o_medical_dashboard">
+            <div class="container-fluid mt-3">
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="text-center mb-4">Tableau de Bord - Cabinet Médical</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Consultations par jour</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="consultationsChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Recettes par médecin</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="revenueChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Taux d'occupation</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="occupationChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

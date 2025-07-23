@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Séquence pour les patients -->
+        <record id="seq_medical_patient" model="ir.sequence">
+            <field name="name">Séquence Patient</field>
+            <field name="code">medical.patient.sequence</field>
+            <field name="prefix">PAT/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Séquence pour les médecins -->
+        <record id="seq_medical_medecin" model="ir.sequence">
+            <field name="name">Séquence Médecin</field>
+            <field name="code">medical.medecin.sequence</field>
+            <field name="prefix">MED/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Séquence pour les consultations -->
+        <record id="seq_medical_consultation" model="ir.sequence">
+            <field name="name">Séquence Consultation</field>
+            <field name="code">medical.consultation.sequence</field>
+            <field name="prefix">CONS/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Séquence pour les factures -->
+        <record id="seq_medical_facture" model="ir.sequence">
+            <field name="name">Séquence Facture</field>
+            <field name="code">medical.facture</field>
+            <field name="prefix">FACT/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Séquence pour les rendez-vous -->
+        <record id="seq_medical_rendez_vous" model="ir.sequence">
+            <field name="name">Séquence Rendez-vous</field>
+            <field name="code">medical.rendez.vous.sequence</field>
+            <field name="prefix">RDV/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+        
+        <!-- Séquence pour les paiements -->
+        <record id="seq_medical_paiement" model="ir.sequence">
+            <field name="name">Séquence Paiement</field>
+            <field name="code">medical.paiement</field>
+            <field name="prefix">PAIE/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

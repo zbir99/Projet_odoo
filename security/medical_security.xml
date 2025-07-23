@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Catégorie de groupes -->
+        <record id="module_medical_category" model="ir.module.category">
+            <field name="name">Cabinet Médical</field>
+            <field name="description">Gestion des accès au cabinet médical</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- Groupe Secrétaire -->
+        <record id="group_medical_secretaire" model="res.groups">
+            <field name="name">Secrétaire</field>
+            <field name="category_id" ref="module_medical_category"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- Groupe Médecin -->
+        <record id="group_medical_medecin" model="res.groups">
+            <field name="name">Médecin</field>
+            <field name="category_id" ref="module_medical_category"/>
+            <field name="implied_ids" eval="[(4, ref('group_medical_secretaire'))]"/>
+        </record>
+
+        <!-- Groupe Administrateur -->
+        <record id="group_medical_admin" model="res.groups">
+            <field name="name">Administrateur Medical</field>
+            <field name="category_id" ref="module_medical_category"/>
+            <field name="implied_ids" eval="[(4, ref('group_medical_medecin'))]"/>
+            <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+        </record>
+
+        <!-- Règles de sécurité par enregistrement -->
+
+        <!-- Règle pour les médecins: voir uniquement leurs patients -->
+        <record id="medical_consultation_medecin_rule" model="ir.rule">
+            <field name="name">Médecin: Consultations propres</field>
+            <field name="model_id" ref="model_medical_consultation"/>
+            <field name="groups" eval="[(4, ref('group_medical_medecin'))]"/>
+            <field name="domain_force">[('medecin_id.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="medical_patient_medecin_rule" model="ir.rule">
+            <field name="name">Médecin: Voir ses propres patients</field>
+            <field name="model_id" ref="model_medical_patient"/>
+            <field name="groups" eval="[(4, ref('group_medical_medecin'))]"/>
+            <field name="domain_force">[('medecin_id.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+    </data>
+</odoo>

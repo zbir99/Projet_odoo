@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Définition du rapport d'ordonnance -->
+    <record id="report_medical_ordonnance" model="ir.actions.report">
+        <field name="name">Ordonnance Médicale</field>
+        <field name="model">medical.consultation</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">cabinet_medecin.report_ordonnance</field>
+        <field name="report_file">cabinet_medecin.report_ordonnance</field>
+        <field name="binding_model_id" ref="model_medical_consultation"/>
+        <field name="binding_type">report</field>
+    </record>
+    
+    <!-- Définition du rapport de facture -->
+    <record id="report_medical_facture" model="ir.actions.report">
+        <field name="name">Facture Médicale</field>
+        <field name="model">medical.facture</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">cabinet_medecin.report_facture</field>
+        <field name="report_file">cabinet_medecin.report_facture</field>
+        <field name="print_report_name">"Facture - %s" % (object.name)</field>
+        <field name="binding_model_id" ref="model_medical_facture"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Template QWeb pour l'ordonnance -->
+    <template id="report_ordonnance_document">
+        <t t-call="web.external_layout">
+            <t t-set="doc" t-value="doc.with_context(lang=lang)" />
+            <div class="page">
+                <div class="oe_structure"/>
+                
+                <!-- En-tête -->
+                <div class="row mt-3 mb-4">
+                    <div class="col-12 text-center">
+                        <h2><strong>ORDONNANCE MÉDICALE</strong></h2>
+                        <h4>Référence: <span t-field="doc.name"/></h4>
+                    </div>
+                </div>
+                
+                <!-- Informations médecin et date -->
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Médecin</h5>
+                                <p class="card-text">
+                                    <strong t-field="doc.medecin_id.name"/><br/>
+                                    <span t-field="doc.medecin_id.specialite"/>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Date</h5>
+                                <p class="card-text text-right">
+                                    <span t-field="doc.date_consultation" t-options='{ "format": "dd MMMM yyyy" }'/>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Informations patient -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Patient</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <strong>Nom et prénom:</strong> 
+                                        <span t-field="doc.patient_id.name"/> <span t-field="doc.patient_id.prenom"/>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>Date de naissance:</strong> 
+                                        <span t-if="doc.patient_id.date_naissance" t-field="doc.patient_id.date_naissance"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Diagnostic -->
+                <div class="row mt-3" t-if="doc.diagnostic">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Diagnostic</h5>
+                            </div>
+                            <div class="card-body">
+                                <p t-field="doc.diagnostic"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ordonnance principale -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Prescription</h5>
+                            </div>
+                            <div class="card-body">
+                                <pre t-field="doc.ordonnance" class="pre-wrap"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Examens -->
+                <div class="row mt-3" t-if="doc.examens">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Examens prescrits</h5>
+                            </div>
+                            <div class="card-body">
+                                <pre t-field="doc.examens" class="pre-wrap"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Signature -->
+                <div class="row mt-5">
+                    <div class="col-8">
+                    </div>
+                    <div class="col-4 text-center">
+                        <p>Signature et cachet</p>
+                        <div style="min-height: 80px;"></div>
+                        <p><strong t-field="doc.medecin_id.name"/></p>
+                    </div>
+                </div>
+                
+                <div class="oe_structure"/>
+                
+                <style>
+                    .pre-wrap {
+                        white-space: pre-wrap;
+                    }
+                </style>
+            </div>
+        </t>
+    </template>
+    
+    <template id="report_ordonnance">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="cabinet_medecin.report_ordonnance_document" t-lang="lang"/>
+            </t>
+        </t>
+    </template>
+</odoo>

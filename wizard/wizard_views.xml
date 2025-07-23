@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue formulaire pour le wizard de génération d'ordonnance -->
+    <record id="view_medical_generate_ordonnance_wizard_form" model="ir.ui.view">
+        <field name="name">medical.generate.ordonnance.wizard.form</field>
+        <field name="model">medical.generate.ordonnance.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Générer une ordonnance">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="consultation_id" invisible="context.get('default_consultation_id')"/>
+                            <field name="patient_id"/>
+                            <field name="medecin_id"/>
+                        </group>
+                        <group>
+                            <field name="date_consultation"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Diagnostic et Ordonnance">
+                            <group>
+                                <field name="diagnostic" placeholder="Diagnostic du patient..." required="1"/>
+                                <field name="ordonnance" placeholder="Ordonnance médicale..." required="1"/>
+                                <field name="examens" placeholder="Examens prescrits..."/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button name="action_generate_ordonnance" string="Générer l'ordonnance" type="object" class="btn-primary"/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action pour le wizard de génération d'ordonnance -->
+    <record id="action_medical_generate_ordonnance_wizard" model="ir.actions.act_window">
+        <field name="name">Générer une ordonnance</field>
+        <field name="res_model">medical.generate.ordonnance.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Vue formulaire pour le wizard de planification de rendez-vous -->
+    <record id="view_medical_schedule_appointment_wizard_form" model="ir.ui.view">
+        <field name="name">medical.schedule.appointment.wizard.form</field>
+        <field name="model">medical.schedule.appointment.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Planifier un rendez-vous">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="patient_id"/>
+                            <field name="medecin_id"/>
+                        </group>
+                        <group>
+                            <field name="date_rendez_vous"/>
+                            <field name="duree" widget="float_time"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Informations">
+                            <group>
+                                <field name="motif" placeholder="Motif du rendez-vous..." required="1"/>
+                                <field name="notes" placeholder="Notes additionnelles..."/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button name="action_schedule_appointment" string="Planifier" type="object" class="btn-primary"/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action pour le wizard de planification de rendez-vous -->
+    <record id="action_medical_schedule_appointment_wizard" model="ir.actions.act_window">
+        <field name="name">Planifier un rendez-vous</field>
+        <field name="res_model">medical.schedule.appointment.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Le bouton "Générer ordonnance" a été supprimé comme demandé -->
+
+    <!-- Ajouter un bouton dans la vue formulaire de patient pour planifier un rendez-vous -->
+    <record id="view_medical_patient_form_wizard" model="ir.ui.view">
+        <field name="name">medical.patient.form.wizard</field>
+        <field name="model">medical.patient</field>
+        <field name="inherit_id" ref="cabinet_medecin.view_medical_patient_form"/>
+        <field name="arch" type="xml">
+            <sheet position="before">
+                <header>
+                    <button name="%(action_medical_schedule_appointment_wizard)d" string="Planifier un rendez-vous" type="action" class="oe_highlight" context="{'default_patient_id': active_id}"/>
+                </header>
+            </sheet>
+        </field>
+    </record>
+</odoo>

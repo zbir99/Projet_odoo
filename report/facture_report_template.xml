@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_facture_document">
+        <t t-call="web.external_layout">
+            <t t-set="doc" t-value="doc.with_context(lang=lang)" />
+            <div class="page">
+                <div class="oe_structure"/>
+                
+                <div class="row">
+                    <div class="col-6">
+                        <h2>
+                            <span>Facture </span>
+                            <span t-field="doc.name"/>
+                        </h2>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-6">
+                        <strong>Patient:</strong>
+                        <div t-field="doc.patient_id.name"/>
+                        <div t-if="doc.patient_id.phone">Tél: <span t-field="doc.patient_id.phone"/></div>
+                        <div t-if="doc.patient_id.email">Email: <span t-field="doc.patient_id.email"/></div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="col-4"><strong>Date:</strong></div>
+                            <div class="col-8"><span t-field="doc.date_creation"/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4"><strong>État:</strong></div>
+                            <div class="col-8">
+                                <span t-if="doc.state == 'draft'" class="badge badge-info">Brouillon</span>
+                                <span t-if="doc.state == 'confirmed'" class="badge badge-warning">Confirmée</span>
+                                <span t-if="doc.state == 'paid'" class="badge badge-success">Payée</span>
+                                <span t-if="doc.state == 'cancelled'" class="badge badge-danger">Annulée</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4"><strong>Médecin:</strong></div>
+                            <div class="col-8"><span t-field="doc.medecin_id.name"/></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th name="th_description" class="text-left">Description</th>
+                                    <th name="th_quantity" class="text-right">Quantité</th>
+                                    <th name="th_priceunit" class="text-right">Prix unitaire</th>
+                                    <th name="th_amount" class="text-right">Montant</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="doc.ligne_ids" t-as="line">
+                                    <td name="td_description">
+                                        <span t-field="line.name"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="line.quantite"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="line.prix_unitaire" t-options='{"widget": "monetary", "display_currency": env.company.currency_id}'/>
+                                    </td>
+                                    <td class="text-right o_price_total">
+                                        <span t-field="line.montant_total" t-options='{"widget": "monetary", "display_currency": env.company.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="clearfix">
+                    <div id="total" class="row">
+                        <div class="col-6">
+                            <t t-if="doc.note">
+                                <p><strong>Notes:</strong></p>
+                                <p t-field="doc.note"/>
+                            </t>
+                        </div>
+                        <div class="col-6">
+                            <table class="table table-sm">
+                                <tr class="border-black o_subtotal">
+                                    <td><strong>Montant Total</strong></td>
+                                    <td class="text-right">
+                                        <span t-field="doc.montant_total" t-options='{"widget": "monetary", "display_currency": env.company.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="oe_structure"/>
+                
+                <div class="row mt-4">
+                    <div class="col-12 text-center">
+                        <p>Merci de votre confiance!</p>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_facture">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="cabinet_medecin.report_facture_document" t-lang="lang"/>
+            </t>
+        </t>
+    </template>
+</odoo>

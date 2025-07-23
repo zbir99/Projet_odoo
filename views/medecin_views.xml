@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue formulaire pour les médecins -->
+    <record id="view_medical_medecin_form" model="ir.ui.view">
+        <field name="name">medical.medecin.form</field>
+        <field name="model">medical.medecin</field>
+        <field name="arch" type="xml">
+            <form string="Médecin">
+                <header>
+                    <!-- Actions potentielles pour les médecins -->
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="reference" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="prenom"/>
+                            <field name="specialite"/>
+                        </group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Horaires">
+                            <field name="horaires_consultation" placeholder="Horaires de consultation du médecin..."/>
+                        </page>
+                        <page string="Consultations">
+                            <field name="consultation_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="date_consultation"/>
+                                    <field name="patient_id"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Rendez-vous">
+                            <field name="rendez_vous_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="date_rendez_vous"/>
+                                    <field name="patient_id"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste pour les médecins -->
+    <record id="view_medical_medecin_tree" model="ir.ui.view">
+        <field name="name">medical.medecin.tree</field>
+        <field name="model">medical.medecin</field>
+        <field name="arch" type="xml">
+            <tree string="Médecins">
+                <field name="reference"/>
+                <field name="name"/>
+                <field name="prenom"/>
+                <field name="specialite"/>
+                <field name="user_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vue recherche pour les médecins -->
+    <record id="view_medical_medecin_search" model="ir.ui.view">
+        <field name="name">medical.medecin.search</field>
+        <field name="model">medical.medecin</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un médecin">
+                <field name="reference"/>
+                <field name="name"/>
+                <field name="prenom"/>
+                <field name="specialite"/>
+                <field name="user_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Spécialité" name="specialite" context="{'group_by': 'specialite'}"/>
+                    <filter string="Utilisateur" name="user_id" context="{'group_by': 'user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vue kanban pour les médecins -->
+    <record id="view_medical_medecin_kanban" model="ir.ui.view">
+        <field name="name">medical.medecin.kanban</field>
+        <field name="model">medical.medecin</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="id"/>
+                <field name="name"/>
+                <field name="prenom"/>
+                <field name="specialite"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title">
+                                    Dr. <field name="name"/> <field name="prenom"/>
+                                </strong>
+                                <div>
+                                    <field name="specialite"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action pour les médecins -->
+    <record id="action_medical_medecin" model="ir.actions.act_window">
+        <field name="name">Médecins</field>
+        <field name="res_model">medical.medecin</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="search_view_id" ref="view_medical_medecin_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer votre premier médecin
+            </p>
+        </field>
+    </record>
+</odoo>

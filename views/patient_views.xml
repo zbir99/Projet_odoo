@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue formulaire pour les patients -->
+    <record id="view_medical_patient_form" model="ir.ui.view">
+        <field name="name">medical.patient.form</field>
+        <field name="model">medical.patient</field>
+        <field name="arch" type="xml">
+            <form string="Patient">
+                <header>
+                    <!-- Actions potentielles pour les patients -->
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="reference" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="prenom"/>
+                            <field name="date_naissance"/>
+                            <field name="age"/>
+                            <field name="sexe"/>
+                        </group>
+                        <group>
+                            <field name="medecin_id"/>
+                            <field name="groupe_sanguin"/>
+                            <field name="mutuelle"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Informations médicales">
+                            <group>
+                                <field name="allergies" placeholder="Allergies connues du patient..."/>
+                                <field name="antecedents" placeholder="Antécédents médicaux du patient..."/>
+                            </group>
+                        </page>
+                        <page string="Consultations">
+                            <field name="consultation_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="date_consultation"/>
+                                    <field name="medecin_id"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Rendez-vous">
+                            <field name="rendez_vous_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="date_rendez_vous"/>
+                                    <field name="medecin_id"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste pour les patients -->
+    <record id="view_medical_patient_tree" model="ir.ui.view">
+        <field name="name">medical.patient.tree</field>
+        <field name="model">medical.patient</field>
+        <field name="arch" type="xml">
+            <tree string="Patients">
+                <field name="reference"/>
+                <field name="name"/>
+                <field name="prenom"/>
+                <field name="date_naissance"/>
+                <field name="age"/>
+                <field name="sexe"/>
+                <field name="medecin_id"/>
+                <field name="groupe_sanguin"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vue recherche pour les patients -->
+    <record id="view_medical_patient_search" model="ir.ui.view">
+        <field name="name">medical.patient.search</field>
+        <field name="model">medical.patient</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un patient">
+                <field name="reference"/>
+                <field name="name"/>
+                <field name="prenom"/>
+                <field name="groupe_sanguin"/>
+                <filter string="Homme" name="homme" domain="[('sexe', '=', 'homme')]"/>
+                <filter string="Femme" name="femme" domain="[('sexe', '=', 'femme')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Groupe sanguin" name="groupe_sanguin" context="{'group_by': 'groupe_sanguin'}"/>
+                    <filter string="Sexe" name="sexe" context="{'group_by': 'sexe'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vue kanban pour les patients -->
+    <record id="view_medical_patient_kanban" model="ir.ui.view">
+        <field name="name">medical.patient.kanban</field>
+        <field name="model">medical.patient</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="id"/>
+                <field name="name"/>
+                <field name="prenom"/>
+                <field name="age"/>
+                <field name="sexe"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title">
+                                    <field name="name"/> <field name="prenom"/>
+                                </strong>
+                                <div>
+                                    <t t-if="record.age.raw_value">
+                                        <span><field name="age"/> ans</span>
+                                    </t>
+                                </div>
+                                <div>
+                                    <field name="sexe"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action pour les patients -->
+    <record id="action_medical_patient" model="ir.actions.act_window">
+        <field name="name">Patients</field>
+        <field name="res_model">medical.patient</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_medical_patient_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer votre premier patient
+            </p>
+        </field>
+    </record>
+</odoo>

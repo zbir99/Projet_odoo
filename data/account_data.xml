@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Création du journal de vente pour les consultations médicales -->
+        <record id="medical_consultation_sale_journal" model="account.journal">
+            <field name="name">Journal des consultations médicales</field>
+            <field name="code">CONS</field>
+            <field name="type">sale</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+    </data>
+</odoo>

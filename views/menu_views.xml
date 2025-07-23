@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu principal -->
+    <menuitem id="menu_medical_root"
+              name="Cabinet Médical"
+              web_icon="cabinet_medecin,static/description/icon.png"
+              sequence="10"/>
+
+    <!-- Sous-menu Dossier Patient -->
+    <menuitem id="menu_medical_patient_root"
+              name="Dossier Patient"
+              parent="menu_medical_root"
+              sequence="10"/>
+
+    <menuitem id="menu_medical_patient"
+              name="Patients"
+              parent="menu_medical_patient_root"
+              action="action_medical_patient"
+              sequence="10"/>
+
+    <!-- Sous-menu Consultations -->
+    <menuitem id="menu_medical_consultation_root"
+              name="Consultations"
+              parent="menu_medical_root"
+              sequence="20"/>
+
+    <menuitem id="menu_medical_consultation"
+              name="Consultations"
+              parent="menu_medical_consultation_root"
+              action="action_medical_consultation"
+              sequence="10"/>
+
+    <!-- Sous-menu Rendez-vous -->
+    <menuitem id="menu_medical_rendez_vous_root"
+              name="Rendez-vous"
+              parent="menu_medical_root"
+              sequence="30"/>
+
+    <menuitem id="menu_medical_rendez_vous"
+              name="Rendez-vous"
+              parent="menu_medical_rendez_vous_root"
+              action="action_medical_rendez_vous"
+              sequence="10"/>
+
+    <!-- Sous-menu Configuration -->
+    <menuitem id="menu_medical_config"
+              name="Configuration"
+              parent="menu_medical_root"
+              sequence="100"/>
+
+    <menuitem id="menu_medical_medecin"
+              name="Médecins"
+              parent="menu_medical_config"
+              action="action_medical_medecin"
+              sequence="10"/>
+</odoo>

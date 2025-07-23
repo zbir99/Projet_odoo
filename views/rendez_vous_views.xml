@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue formulaire pour les rendez-vous -->
+    <record id="view_medical_rendez_vous_form" model="ir.ui.view">
+        <field name="name">medical.rendez.vous.form</field>
+        <field name="model">medical.rendez.vous</field>
+        <field name="arch" type="xml">
+            <form string="Rendez-vous">
+                <header>
+                    <button name="action_confirm" string="Confirmer" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_done" string="Terminer" type="object" class="oe_highlight" invisible="state != 'confirm'"/>
+                    <button name="action_cancel" string="Annuler" type="object" invisible="state not in ('draft', 'confirm')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirm,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_id" options="{'no_create': True}" readonly="state != 'draft'"/>
+                            <field name="medecin_id" options="{'no_create': True}" readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="date_rendez_vous" readonly="state != 'draft'"/>
+                            <field name="duree" widget="float_time" readonly="state != 'draft'"/>
+                            <field name="consultation_id" readonly="1" invisible="not consultation_id"/>
+                            <field name="calendar_event_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Informations">
+                            <group>
+                                <field name="motif" placeholder="Motif du rendez-vous..." readonly="state == 'done'"/>
+                                <field name="notes" placeholder="Notes additionnelles..." readonly="state == 'done'"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste pour les rendez-vous -->
+    <record id="view_medical_rendez_vous_tree" model="ir.ui.view">
+        <field name="name">medical.rendez.vous.tree</field>
+        <field name="model">medical.rendez.vous</field>
+        <field name="arch" type="xml">
+            <tree string="Rendez-vous" decoration-info="state == 'draft'" decoration-success="state == 'done'" decoration-warning="state == 'confirm'" decoration-danger="state == 'cancel'">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="medecin_id"/>
+                <field name="date_rendez_vous"/>
+                <field name="duree" widget="float_time"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vue recherche pour les rendez-vous -->
+    <record id="view_medical_rendez_vous_search" model="ir.ui.view">
+        <field name="name">medical.rendez.vous.search</field>
+        <field name="model">medical.rendez.vous</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un rendez-vous">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="medecin_id"/>
+                <filter string="Planifié" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Confirmé" name="confirm" domain="[('state', '=', 'confirm')]"/>
+                <filter string="Terminé" name="done" domain="[('state', '=', 'done')]"/>
+                <filter string="Annulé" name="cancel" domain="[('state', '=', 'cancel')]"/>
+                <filter string="Aujourd'hui" name="today" domain="[('date_rendez_vous', '&gt;=', context_today().strftime('%Y-%m-%d 00:00:00')), ('date_rendez_vous', '&lt;=', context_today().strftime('%Y-%m-%d 23:59:59'))]"/>
+                <filter string="Cette semaine" name="this_week" domain="[('date_rendez_vous', '&gt;=', (context_today() + relativedelta(weeks=-1,days=1,weekday=0)).strftime('%Y-%m-%d')), ('date_rendez_vous', '&lt;=', (context_today() + relativedelta(weekday=6)).strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Patient" name="patient_id" context="{'group_by': 'patient_id'}"/>
+                    <filter string="Médecin" name="medecin_id" context="{'group_by': 'medecin_id'}"/>
+                    <filter string="État" name="state" context="{'group_by': 'state'}"/>
+                    <filter string="Date" name="date_rendez_vous" context="{'group_by': 'date_rendez_vous'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vue calendrier pour les rendez-vous -->
+    <record id="view_medical_rendez_vous_calendar" model="ir.ui.view">
+        <field name="name">medical.rendez.vous.calendar</field>
+        <field name="model">medical.rendez.vous</field>
+        <field name="arch" type="xml">
+            <calendar string="Rendez-vous" date_start="date_rendez_vous" color="medecin_id" mode="week">
+                <field name="patient_id"/>
+                <field name="medecin_id"/>
+                <field name="duree" widget="float_time"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Vue kanban pour les rendez-vous -->
+    <record id="view_medical_rendez_vous_kanban" model="ir.ui.view">
+        <field name="name">medical.rendez.vous.kanban</field>
+        <field name="model">medical.rendez.vous</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="medecin_id"/>
+                <field name="date_rendez_vous"/>
+                <field name="state"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div>
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                </div>
+                                <div>
+                                    <span><field name="patient_id"/></span>
+                                </div>
+                                <div>
+                                    <span><field name="medecin_id"/></span>
+                                </div>
+                                <div>
+                                    <span><field name="date_rendez_vous"/></span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action pour les rendez-vous -->
+    <record id="action_medical_rendez_vous" model="ir.actions.act_window">
+        <field name="name">Rendez-vous</field>
+        <field name="res_model">medical.rendez.vous</field>
+        <field name="view_mode">calendar,tree,form,kanban</field>
+        <field name="search_view_id" ref="view_medical_rendez_vous_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer votre premier rendez-vous
+            </p>
+        </field>
+    </record>
+</odoo>

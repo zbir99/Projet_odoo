@@ -48,8 +48,6 @@ Le module définit trois niveaux d'accès :
 
 ## Support
 
-Pour toute question ou assistance, veuillez contacter l'équipe de développement.
+Pour toute question ou assistance, veuillez me contacter sur cette adresse "yassine99zbir@gmail.com" .
 
-## Licence
 
-LGPL-3
